@@ -18,6 +18,12 @@ export const MACHINE_X = -1.05
 export const MACHINE_Z = -0.14
 export const MACHINE_BODY = { width: 0.85, height: 0.52, depth: 0.46 }
 
+/** 操作パネルを貼り付けるマシン前面の位置。本体の高さに収まるよう中央やや上に置く */
+export const MACHINE_PANEL = {
+  y: COUNTER_TOP_Y + MACHINE_BODY.height * 0.58,
+  z: MACHINE_Z + MACHINE_BODY.depth / 2 + 0.02,
+}
+
 /** ポルタフィルターのスパウトの位置。抽出したショットはこの真下に出る */
 export const SPOUT_OFFSET_X = 0.045
 export const TRAY_Z = MACHINE_Z + MACHINE_BODY.depth / 2 + 0.07

@@ -4,8 +4,7 @@ import { canStartBrew, remainingBrewMs } from '../domain/game'
 import { BREW_DURATION_MS, BREW_MODE_LABELS } from '../domain/machine'
 import { useGameStore } from '../store/useGameStore'
 import type { BrewMode } from '../domain/types'
-import { MACHINE_PANEL } from './EspressoMachine'
-import { MACHINE_X } from './layout'
+import { MACHINE_PANEL, MACHINE_X } from './layout'
 
 /** パネルの表示倍率。マシンの幅にちょうど収まるよう実画面で合わせた値 */
 const PANEL_SCALE = 0.1

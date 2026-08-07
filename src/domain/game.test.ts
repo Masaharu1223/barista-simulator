@@ -42,7 +42,7 @@ function stateWithOrders(specs: Array<[DrinkType, Size, Temp]>): GameState {
   return { ...createInitialState(1), cups }
 }
 
-/** M サイズのラテ（＝1ショット）が4件並んだ状態 */
+/** 先頭3件が1ショットで済む注文、4件目だけ3ショット必要な状態 */
 function fourSingleShotOrders(): GameState {
   return stateWithOrders([
     ['latte', 'M', 'hot'],

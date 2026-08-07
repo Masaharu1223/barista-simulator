@@ -8,12 +8,6 @@ const COLORS = {
   portafilter: '#141518',
 }
 
-/** 操作パネルを貼り付けるマシン前面の位置。本体の高さに収まるよう中央やや上に置く */
-export const MACHINE_PANEL = {
-  y: COUNTER_TOP_Y + MACHINE_BODY.height * 0.58,
-  z: MACHINE_Z + MACHINE_BODY.depth / 2 + 0.02,
-}
-
 /**
  * エスプレッソマシン。プリミティブの組み合わせで、
  * 本体・カップウォーマー・グループヘッド・ポルタフィルターを表現する。

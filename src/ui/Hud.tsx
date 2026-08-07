@@ -1,5 +1,6 @@
 import { DRINK_LABELS, TEMP_LABELS } from '../domain/recipe'
 import { useGameStore } from '../store/useGameStore'
+import { orderNumber } from './format'
 
 /**
  * 画面右上の注文一覧。
@@ -17,7 +18,7 @@ function OrderQueue() {
           const done = cup.pouredShots >= cup.order.requiredShots
           return (
             <li key={cup.id} className={`order-row${done ? ' order-row--done' : ''}`}>
-              <span className="order-row__no">#{cup.order.id.replace('order-', '')}</span>
+              <span className="order-row__no">{orderNumber(cup)}</span>
               <span className="order-row__drink">{DRINK_LABELS[cup.order.drink]}</span>
               <span className="order-row__size">{cup.order.size}</span>
               <span className={`order-row__temp order-row__temp--${cup.order.temp}`}>

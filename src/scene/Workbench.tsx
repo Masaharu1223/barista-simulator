@@ -2,12 +2,9 @@ import { Html } from '@react-three/drei'
 import type { Cup } from '../domain/types'
 import { DRINK_SHORT_LABELS } from '../domain/recipe'
 import { useGameStore } from '../store/useGameStore'
+import { orderNumber } from '../ui/format'
 import { CupMesh } from './CupMesh'
 import { COUNTER_TOP_Y, CUP_SLOT_X, CUP_Z, SERVE_COUNTER, SERVE_SLOT_X } from './layout'
-
-export function orderNumber(cup: Cup): string {
-  return `#${cup.order.id.replace('order-', '')}`
-}
 
 /**
  * カップの手前に出す小さな札。
