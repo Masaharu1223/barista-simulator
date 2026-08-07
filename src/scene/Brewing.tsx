@@ -81,11 +81,11 @@ export function TrayShots() {
 
   return (
     <group>
-      {trayShots.map((shot, index) =>
+      {trayShots.map((shot) =>
         shot.id === heldShotId ? null : (
           <ShotGlassMesh
             key={shot.id}
-            position={[TRAY_SLOT_X[index] ?? MACHINE_X, TRAY_SURFACE_Y, TRAY_Z]}
+            position={[TRAY_SLOT_X[shot.slot] ?? MACHINE_X, TRAY_SURFACE_Y, TRAY_Z]}
             fill={1}
             onPointerDown={(event) => {
               event.stopPropagation()

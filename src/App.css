@@ -189,6 +189,165 @@ kbd {
   text-align: center;
 }
 
+/* 画面右上の注文一覧 */
+.order-queue {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 252px;
+  padding: 10px 12px;
+  background: var(--hud-bg);
+  border: 1px solid var(--hud-border);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  user-select: none;
+}
+
+.order-queue__title {
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+
+.order-queue__list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.order-row {
+  display: grid;
+  grid-template-columns: 24px 1fr 14px 32px 28px;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 6px;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.order-row--done {
+  background: rgba(110, 231, 160, 0.14);
+}
+
+.order-row__no {
+  color: rgba(242, 231, 216, 0.5);
+  font-variant-numeric: tabular-nums;
+}
+
+.order-row__size {
+  font-weight: 700;
+}
+
+.order-row__temp {
+  padding: 1px 0;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.order-row__temp--hot {
+  background: rgba(224, 106, 62, 0.85);
+  color: #fff4ea;
+}
+
+.order-row__temp--ice {
+  background: rgba(90, 160, 210, 0.85);
+  color: #f0f8ff;
+}
+
+.order-row__shots {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  text-align: right;
+  color: var(--accent);
+}
+
+.order-row--done .order-row__shots {
+  color: #6ee7a0;
+}
+
+/* 画面左上の成績 */
+.stats {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: var(--hud-bg);
+  border: 1px solid var(--hud-border);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  user-select: none;
+}
+
+.stats__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  font-size: 12px;
+}
+
+.stats__label {
+  color: var(--hud-muted);
+}
+
+.stats__value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--hud-text);
+}
+
+.stats__row--warn .stats__value {
+  color: #f0a58a;
+}
+
+.stats__reset {
+  margin-top: 4px;
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid rgba(242, 231, 216, 0.25);
+  border-radius: 6px;
+  color: rgba(242, 231, 216, 0.7);
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.stats__reset:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--hud-text);
+}
+
+/* 完成したカップに出る提供ボタン */
+.serve-button {
+  padding: 5px 12px;
+  background: #2f9e63;
+  border: 1px solid rgba(160, 255, 200, 0.55);
+  border-radius: 7px;
+  color: #f2fff7;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(110, 231, 160, 0.4);
+  transition: background 120ms ease;
+}
+
+.serve-button:hover {
+  background: #38b874;
+}
+
 /* 3D空間のカップに重ねる注文ラベル */
 .cup-label {
   display: flex;

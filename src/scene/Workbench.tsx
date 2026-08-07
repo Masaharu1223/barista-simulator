@@ -13,21 +13,29 @@ export function orderNumber(cup: Cup): string {
  * カップの手前に出す小さな札。
  * 何ショット必要かは操作に直結するので3Dの側に置き、
  * 注文の詳細は画面右上の一覧に任せて横幅を詰めている。
+ * 完成したカップでは、そのまま提供ボタンに変わる。
  */
-function CupLabel({ cup }: { cup: Cup }) {
+function CupLabel({ cup, onServe }: { cup: Cup; onServe: () => void }) {
   const done = cup.pouredShots >= cup.order.requiredShots
+
   return (
     <Html center distanceFactor={1.8} position={[0, -0.012, 0.085]} zIndexRange={[10, 0]}>
-      <div className={`cup-label cup-label--${cup.order.temp}${done ? ' cup-label--done' : ''}`}>
-        <span className="cup-label__no">{orderNumber(cup)}</span>
-        <span className="cup-label__drink">
-          {DRINK_SHORT_LABELS[cup.order.drink]}
-          {cup.order.size}
-        </span>
-        <span className="cup-label__shots">
-          {cup.pouredShots}/{cup.order.requiredShots}
-        </span>
-      </div>
+      {done ? (
+        <button type="button" className="serve-button" onClick={onServe}>
+          {orderNumber(cup)} 提供する
+        </button>
+      ) : (
+        <div className={`cup-label cup-label--${cup.order.temp}`}>
+          <span className="cup-label__no">{orderNumber(cup)}</span>
+          <span className="cup-label__drink">
+            {DRINK_SHORT_LABELS[cup.order.drink]}
+            {cup.order.size}
+          </span>
+          <span className="cup-label__shots">
+            {cup.pouredShots}/{cup.order.requiredShots}
+          </span>
+        </div>
+      )}
     </Html>
   )
 }
@@ -37,6 +45,7 @@ export function Workbench() {
   const cups = useGameStore((state) => state.game.cups)
   const heldShotId = useGameStore((state) => state.heldShotId)
   const pourHeldShot = useGameStore((state) => state.pourHeldShot)
+  const serve = useGameStore((state) => state.serve)
   const dragging = heldShotId !== null
 
   return (
@@ -56,7 +65,7 @@ export function Workbench() {
                 pourHeldShot(cup.id)
               }}
             />
-            <CupLabel cup={cup} />
+            <CupLabel cup={cup} onServe={() => serve(cup.id)} />
           </group>
         )
       })}

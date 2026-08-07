@@ -2,6 +2,7 @@ import { Canvas } from '@react-three/fiber'
 import { useCallback, useEffect, useState } from 'react'
 import { Scene } from './scene/Scene'
 import { STATIONS, STATION_ORDER, type StationId } from './scene/stations'
+import { Hud } from './ui/Hud'
 import { useGameStore } from './store/useGameStore'
 import './App.css'
 
@@ -59,6 +60,8 @@ export default function App() {
         <color attach="background" args={['#181310']} />
         <Scene station={station} onFocusStation={focusStation} />
       </Canvas>
+
+      <Hud />
 
       <div className="station-bar">
         <div className="station-bar__name">{STATIONS[station].label}</div>

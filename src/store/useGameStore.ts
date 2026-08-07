@@ -9,6 +9,16 @@ import {
 } from '../domain/game'
 import type { BrewMode, GameState } from '../domain/types'
 
+/**
+ * 注文列の乱数シード。?seed=1 のように URL で固定できる。
+ * 同じ並びを再現できると、動作確認も段取りの比較もやりやすい。
+ */
+function initialSeed(): number {
+  const raw = new URLSearchParams(window.location.search).get('seed')
+  const parsed = raw === null ? Number.NaN : Number(raw)
+  return Number.isFinite(parsed) ? parsed : Date.now()
+}
+
 type GameStore = {
   game: GameState
   /** 100ms ごとに更新される現在時刻。残り秒数の表示にだけ使う */
@@ -26,7 +36,7 @@ type GameStore = {
 }
 
 export const useGameStore = create<GameStore>((set) => ({
-  game: createInitialState(),
+  game: createInitialState(initialSeed()),
   now: Date.now(),
   heldShotId: null,
 
@@ -52,5 +62,5 @@ export const useGameStore = create<GameStore>((set) => ({
 
   serve: (cupId) => set((s) => ({ game: serveCup(s.game, cupId) })),
 
-  reset: () => set({ game: createInitialState(), heldShotId: null, now: Date.now() }),
+  reset: () => set({ game: createInitialState(initialSeed()), heldShotId: null, now: Date.now() }),
 }))

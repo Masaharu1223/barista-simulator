@@ -19,6 +19,8 @@ export type Order = {
  */
 export type Shot = {
   id: string
+  /** どちらのスパウトから出たか。トレイ上の置き場所がこれで決まる */
+  slot: number
 }
 
 /** 注文に紐づいた作業中のカップ。注文が入った時点で1個作られる。 */

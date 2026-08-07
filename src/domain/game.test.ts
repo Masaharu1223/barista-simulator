@@ -110,6 +110,16 @@ describe('抽出', () => {
     expect(s.trayShots[0].id).not.toBe(s.trayShots[1].id)
   })
 
+  it('ショットはスパウトごとの置き場所を持ち、1つ取り出しても残りは動かない', () => {
+    let s = brew(createInitialState(1), 'double')
+    expect(s.trayShots.map((shot) => shot.slot)).toEqual([0, 1])
+
+    const secondShot = s.trayShots[1]
+    s = discardShot(s, s.trayShots[0].id)
+    expect(s.trayShots).toEqual([secondShot])
+    expect(s.trayShots[0].slot).toBe(1)
+  })
+
   it('トレイにショットが残っている間は次の抽出を開始できない', () => {
     const s = brew(createInitialState(1), 'double')
     expect(canStartBrew(s)).toBe(false)

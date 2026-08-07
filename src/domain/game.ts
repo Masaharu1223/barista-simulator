@@ -85,7 +85,9 @@ export function tick(state: GameState, now: number): GameState {
   let seq = state.seq
   for (let i = 0; i < SHOTS_PER_BREW[machine.mode]; i += 1) {
     seq += 1
-    shots.push({ id: `shot-${seq}` })
+    // slot はスパウトの位置。1つ取り出しても残りが動かないよう、
+    // 並び順ではなくショット自身が置き場所を持つ
+    shots.push({ id: `shot-${seq}`, slot: i })
   }
 
   return {

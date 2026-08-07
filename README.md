@@ -1,32 +1,79 @@
-# React + TypeScript + Vite
+# バリスタシミュレーター
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+カフェのバリスタ業務を1人称視点で体験する Web アプリ。
 
-Currently, two official plugins are available:
+中心にあるのは **「入ってきた複数の注文を見て、エスプレッソの抽出回数を最小にする段取りを組む」** というパズル性です。マシンは1回にシングルかダブルのどちらかしか抽出できず、抽出には実時間で25〜30秒かかります。ダブル抽出では1ショット×2個が出るので、それをどの注文にどう振り分けるかがプレイの核になります。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 遊び方
 
-## React Compiler
+1. 画面右上のオーダーを見て、必要なショット数を数える
+2. マシンでシングル（25秒／1ショット）かダブル（30秒／2ショット）を選び、抽出する
+3. 抽出が終わったらショットグラスを掴んで、カップにドラッグして注ぐ
+4. 必要数が揃うと「提供する」ボタンが出るので、押して提供台へ出す
+5. 余ったショットはノックボックスに捨てる（廃棄数に計上される）
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+抽出回数と廃棄数が少ないほど、段取りが良いということになります。
 
-## Expanding the Oxlint configuration
+### 操作
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+| 操作 | 内容 |
+|---|---|
+| ドラッグ | ショットグラスを掴んでカップやノックボックスへ運ぶ |
+| <kbd>Q</kbd> <kbd>E</kbd> | ステーション間を移動（マシン ⇄ 作業台 ⇄ 提供台） |
+| <kbd>Space</kbd> | バー全体を見渡す視点に戻る |
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+### ルール
+
+| ドリンク | M | L |
+|---|---|---|
+| カフェラテ | 1 shot | 2 shot |
+| バニララテ | 1 shot | 2 shot |
+| アメリカーノ | 2 shot | 3 shot |
+
+- HOT / ICE は見た目だけの違いで、必要ショット数は変わらない
+- マシンは1回に1抽出だけ。抽出中は次を始められない
+- トレイにショットが残っている間は次の抽出を始められない（片付けてから次を引く）
+- 必要数を満たしたカップには注げない
+
+## 開発
+
+```bash
+npm install
+npm run dev      # 開発サーバー
+npm test         # ドメインロジックのテスト
+npm run build    # 本番ビルド
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+### 動作確認
+
+`?seed=7` のように URL でシードを指定すると、同じ注文列を再現できます。動作確認にも、同じ条件で段取りを競うのにも使えます。
+
+WebGL の描画は型チェックでもユニットテストでも検証できないため、画面の確認には撮影スクリプトを使います。
+
+```bash
+# 開発サーバーを起動した状態で
+APP_URL="http://localhost:5173/?seed=7" node scripts/screenshot.mjs out.png
+
+# 操作を与えてから撮る（click / drag / hold / key / wait をカンマ区切りで）
+APP_URL="http://localhost:5173/?seed=7" \
+  ACTIONS="click:337x455,wait:26000,drag:325x505>650x480" \
+  node scripts/screenshot.mjs out.png
+```
+
+## 構成
+
+```
+src/
+  domain/   ゲームのルール。純粋TSで、Three.js に依存しない
+  store/    Zustand ストア。domain の関数を束ねる
+  scene/    3D シーン（React Three Fiber）
+  ui/       画面端の HUD（注文一覧・成績）
+```
+
+ルールはすべて `src/domain/` に閉じていて、`npm test` はこの層だけを対象にしています。3D 側はそれを表示して操作を渡すだけの役割です。
+
+状態管理に Zustand を使っているのは、`<Canvas>` が独立した React ルートになり React Context が境界を越えないためです。
+
+## 技術スタック
+
+Vite / React 19 / TypeScript / three.js / @react-three/fiber v9 / @react-three/drei / Zustand / Vitest

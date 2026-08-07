@@ -29,8 +29,9 @@ export function CupMesh({ cup, position, highlight = 'none', onPointerUp, onClic
   const liquidHeight = Math.max(0.001, ratio * height * 0.78)
   const liquidRadius = bottomRadius + (radius - bottomRadius) * (liquidHeight / height) - 0.002
 
+  // 捨て先（ノックボックス）の印と紛れないよう、注げない印ははっきりした赤にする
   const ringColor =
-    highlight === 'valid' ? '#6ee7a0' : highlight === 'invalid' ? '#ef6b6b' : null
+    highlight === 'valid' ? '#6ee7a0' : highlight === 'invalid' ? '#e03434' : null
 
   return (
     <group position={position} onPointerUp={onPointerUp} onClick={onClick}>

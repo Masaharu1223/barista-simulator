@@ -42,6 +42,14 @@ for (const action of actions) {
     await page.mouse.down()
     await page.mouse.move(x2, y2, { steps: 20 })
     await page.mouse.up()
+  } else if (kind === 'hold') {
+    // 掴んだまま離さない。ドラッグ中の見た目を撮るために使う
+    const [from, to] = value.split('>')
+    const [x1, y1] = from.split('x').map(Number)
+    const [x2, y2] = to.split('x').map(Number)
+    await page.mouse.move(x1, y1)
+    await page.mouse.down()
+    await page.mouse.move(x2, y2, { steps: 20 })
   } else if (kind === 'key') {
     await page.keyboard.press(value)
   } else if (kind === 'wait') {
