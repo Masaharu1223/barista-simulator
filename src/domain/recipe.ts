@@ -10,6 +10,13 @@ export const DRINK_LABELS: Record<DrinkType, string> = {
   americano: 'アメリカーノ',
 }
 
+/** カップの脇に出す短い表記。横に4つ並べても重ならない長さにしてある */
+export const DRINK_SHORT_LABELS: Record<DrinkType, string> = {
+  latte: 'ラテ',
+  'vanilla-latte': 'バニラ',
+  americano: 'アメ',
+}
+
 export const TEMP_LABELS: Record<Temp, string> = {
   hot: 'HOT',
   ice: 'ICE',
