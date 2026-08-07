@@ -5,6 +5,7 @@ import { BREW_DURATION_MS, SHOTS_PER_BREW } from '../domain/machine'
 import { useGameStore } from '../store/useGameStore'
 import { ShotGlassMesh } from './ShotGlassMesh'
 import { COUNTER_TOP_Y, MACHINE_X, SHOT_GLASS, TRAY_SLOT_X, TRAY_Z } from './layout'
+import { DRAG_LIFT_Y, clampToCounter, dragPoint } from './dragState'
 
 /** ドリップトレイの上面。ショットグラスはこの高さに置かれる */
 export const TRAY_SURFACE_Y = COUNTER_TOP_Y + 0.016
@@ -88,6 +89,11 @@ export function TrayShots() {
             fill={1}
             onPointerDown={(event) => {
               event.stopPropagation()
+              // 掴んだ瞬間の位置を入れておかないと、最初の1フレームだけ
+              // 前回のドラッグ位置にグラスが現れてしまう
+              dragPoint.copy(event.point)
+              dragPoint.y = COUNTER_TOP_Y + DRAG_LIFT_Y
+              clampToCounter(dragPoint)
               holdShot(shot.id)
             }}
           />

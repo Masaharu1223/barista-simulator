@@ -35,15 +35,31 @@ function CupLabel({ cup }: { cup: Cup }) {
 /** 作業台に並ぶ、注文ごとのカップ */
 export function Workbench() {
   const cups = useGameStore((state) => state.game.cups)
+  const heldShotId = useGameStore((state) => state.heldShotId)
+  const pourHeldShot = useGameStore((state) => state.pourHeldShot)
+  const dragging = heldShotId !== null
 
   return (
     <group>
-      {cups.map((cup, index) => (
-        <group key={cup.id} position={[CUP_SLOT_X[index] ?? 0, COUNTER_TOP_Y, CUP_Z]}>
-          <CupMesh cup={cup} position={[0, 0, 0]} />
-          <CupLabel cup={cup} />
-        </group>
-      ))}
+      {cups.map((cup, index) => {
+        const acceptsShot = cup.pouredShots < cup.order.requiredShots
+        return (
+          <group key={cup.id} position={[CUP_SLOT_X[index] ?? 0, COUNTER_TOP_Y, CUP_Z]}>
+            <CupMesh
+              cup={cup}
+              position={[0, 0, 0]}
+              // ドラッグ中は全カップに可否を出す。都度ホバーを見るより分かりやすい
+              highlight={dragging ? (acceptsShot ? 'valid' : 'invalid') : 'none'}
+              onPointerUp={(event) => {
+                if (!dragging) return
+                event.stopPropagation()
+                pourHeldShot(cup.id)
+              }}
+            />
+            <CupLabel cup={cup} />
+          </group>
+        )
+      })}
     </group>
   )
 }

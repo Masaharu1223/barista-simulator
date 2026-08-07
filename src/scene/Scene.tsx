@@ -1,6 +1,7 @@
 import { BrewingShots, TrayShots } from './Brewing'
 import { Cafe } from './Cafe'
 import { CameraRig } from './CameraRig'
+import { DragLayer } from './DragLayer'
 import { EspressoMachine } from './EspressoMachine'
 import { MachineControls } from './MachineControls'
 import { ServedCups, Workbench } from './Workbench'
@@ -40,6 +41,7 @@ export function Scene({ station, onFocusStation }: Props) {
       <TrayShots />
       <Workbench />
       <ServedCups />
+      <DragLayer />
     </group>
   )
 }

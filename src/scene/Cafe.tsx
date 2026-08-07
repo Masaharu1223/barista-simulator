@@ -1,3 +1,5 @@
+import { DoubleSide } from 'three'
+import { useGameStore } from '../store/useGameStore'
 import { COUNTER, COUNTER_TOP_Y, KNOCK_BOX, SERVE_COUNTER } from './layout'
 
 const COLORS = {
@@ -47,10 +49,25 @@ function Counter() {
   )
 }
 
-/** 余ったショットを捨てるノックボックス */
+/**
+ * 余ったショットを捨てるノックボックス。
+ * トレイが空でないと次の抽出ができないルールがあるので、
+ * 行き先のないショットはここへ捨てて手を空ける。
+ */
 export function KnockBox() {
+  const heldShotId = useGameStore((state) => state.heldShotId)
+  const discardHeldShot = useGameStore((state) => state.discardHeldShot)
+  const dragging = heldShotId !== null
+
   return (
-    <group position={[KNOCK_BOX.x, COUNTER_TOP_Y, KNOCK_BOX.z]}>
+    <group
+      position={[KNOCK_BOX.x, COUNTER_TOP_Y, KNOCK_BOX.z]}
+      onPointerUp={(event) => {
+        if (!dragging) return
+        event.stopPropagation()
+        discardHeldShot()
+      }}
+    >
       <mesh position={[0, KNOCK_BOX.height / 2, 0]} castShadow>
         <cylinderGeometry
           args={[KNOCK_BOX.radius, KNOCK_BOX.radius * 0.88, KNOCK_BOX.height, 24]}
@@ -62,6 +79,14 @@ export function KnockBox() {
         <circleGeometry args={[KNOCK_BOX.radius * 0.82, 24]} />
         <meshStandardMaterial color="#0d0c0c" roughness={1} />
       </mesh>
+
+      {/* ドラッグ中は捨て先として目印を出す */}
+      {dragging && (
+        <mesh position={[0, 0.003, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[KNOCK_BOX.radius + 0.012, KNOCK_BOX.radius + 0.032, 32]} />
+          <meshBasicMaterial color="#f0a58a" transparent opacity={0.85} side={DoubleSide} />
+        </mesh>
+      )}
     </group>
   )
 }

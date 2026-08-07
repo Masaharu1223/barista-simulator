@@ -49,23 +49,20 @@ export function EspressoMachine({ onSelect }: { onSelect?: () => void }) {
         <meshStandardMaterial color={COLORS.panel} roughness={0.4} />
       </mesh>
 
-      {/* グループヘッド */}
-      <mesh
-        position={[MACHINE_X, COUNTER_TOP_Y + 0.19, MACHINE_Z + MACHINE_BODY.depth / 2 - 0.02]}
-        castShadow
-      >
+      {/* グループヘッド。本体から前へ突き出し、真下にグラスが置けるようにする */}
+      <mesh position={[MACHINE_X, COUNTER_TOP_Y + 0.19, TRAY_Z - 0.02]} castShadow>
         <cylinderGeometry args={[0.062, 0.062, 0.09, 20]} />
         <meshStandardMaterial color={COLORS.group} roughness={0.3} metalness={0.75} />
       </mesh>
 
       {/* ポルタフィルター（グループヘッドに刺さったハンドル） */}
-      <group position={[MACHINE_X, COUNTER_TOP_Y + 0.135, MACHINE_Z + MACHINE_BODY.depth / 2 + 0.02]}>
+      <group position={[MACHINE_X, COUNTER_TOP_Y + 0.135, TRAY_Z]}>
         <mesh castShadow>
           <cylinderGeometry args={[0.058, 0.052, 0.04, 20]} />
           <meshStandardMaterial color={COLORS.group} roughness={0.3} metalness={0.75} />
         </mesh>
-        <mesh position={[0, -0.005, 0.14]} rotation={[Math.PI / 2, 0, 0]} castShadow>
-          <cylinderGeometry args={[0.017, 0.017, 0.2, 12]} />
+        <mesh position={[0, 0.012, 0.13]} rotation={[Math.PI / 2, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.014, 0.014, 0.17, 12]} />
           <meshStandardMaterial color={COLORS.portafilter} roughness={0.6} />
         </mesh>
         {/* ダブルスパウト：2口あるので1回の抽出で2杯ぶん取れる */}

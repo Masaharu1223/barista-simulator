@@ -21,8 +21,8 @@ export const STATIONS: Record<StationId, CameraPreset> = {
   },
   machine: {
     label: 'エスプレッソマシン',
-    position: [MACHINE_X, 1.62, 1.12],
-    target: [MACHINE_X, 1.08, -0.1],
+    position: [MACHINE_X - 0.05, 1.72, 1.6],
+    target: [MACHINE_X, 1.08, -0.05],
   },
   workbench: {
     label: '作業台',

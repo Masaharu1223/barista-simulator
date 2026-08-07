@@ -20,7 +20,7 @@ export const MACHINE_BODY = { width: 0.85, height: 0.52, depth: 0.46 }
 
 /** ポルタフィルターのスパウトの位置。抽出したショットはこの真下に出る */
 export const SPOUT_OFFSET_X = 0.045
-export const TRAY_Z = MACHINE_Z + MACHINE_BODY.depth / 2 + 0.02
+export const TRAY_Z = MACHINE_Z + MACHINE_BODY.depth / 2 + 0.07
 export const TRAY_SLOT_X = [MACHINE_X - SPOUT_OFFSET_X, MACHINE_X + SPOUT_OFFSET_X]
 
 /** 余ったショットを捨てるノックボックス */
