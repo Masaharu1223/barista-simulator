@@ -88,3 +88,8 @@ seed=7 でダブル1回から2杯（#1・#3）を完成させ、抽出1回・廃
 - ミルクスチーム・シロップ・氷などの工程
 - ショットの鮮度（抽出から時間が経つと劣化）
 - 提供台へのカップ移動のアニメーション
+
+## 決定事項
+
+- GitHub 同期後の扱い: `feature/initial-implementation` から `main` への **PR を作成しマージする**方針で決定（2026-08-10）
+  - リポジトリ: https://github.com/Masaharu1223/barista-simulator（Public）
