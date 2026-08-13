@@ -1,5 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { useCallback, useEffect, useState } from 'react'
+import { ReadySignal } from './scene/ReadySignal'
 import { Scene } from './scene/Scene'
 import { STATIONS, STATION_ORDER, type StationId } from './scene/stations'
 import { Hud } from './ui/Hud'
@@ -45,6 +46,7 @@ function useStationKeys(setStation: (updater: (current: StationId) => StationId)
 
 export default function App() {
   const [station, setStation] = useState<StationId>('overview')
+  const [ready, setReady] = useState(false)
   useGameClock()
   useStationKeys(setStation)
 
@@ -59,7 +61,20 @@ export default function App() {
       >
         <color attach="background" args={['#181310']} />
         <Scene station={station} onFocusStation={focusStation} />
+        <ReadySignal onReady={() => setReady(true)} />
       </Canvas>
+
+      {/*
+        3Dシーンの初回描画には数秒かかる。それまでは真っ黒な画面の上に
+        マシン操作パネル（HTML部分）だけが先に存在し、カーソルを合わせると
+        反応してしまい紛らわしいため、描画が終わるまでこのオーバーレイで覆う。
+      */}
+      {!ready && (
+        <div className="loading-overlay">
+          <div className="loading-overlay__spinner" />
+          <div className="loading-overlay__text">バーを準備しています…</div>
+        </div>
+      )}
 
       <Hud />
 
