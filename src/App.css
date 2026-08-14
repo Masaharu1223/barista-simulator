@@ -75,6 +75,30 @@ kbd {
 }
 
 /*
+ * マシンのグループヘッドに付いている「画面」部分。
+ * 実際の3Dメッシュ（EspressoMachine.tsx の GROUP_HEAD.screen/band）が
+ * 黒い筐体と赤いリングの質感を担当しているので、HTML側は背景を持たせない。
+ * 背景を付けると矩形のHTMLパネルが3D側の円柱・赤いリングを覆い隠してしまうため。
+ */
+.machine-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+
+/* 実機のLCD温度表示を模した演出テキスト。実際の温度ロジックは持たない固定表示 */
+.machine-screen__temp {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #8fe3c0;
+  text-shadow: 0 0 6px rgba(143, 227, 192, 0.6);
+}
+
+/*
  * マシン前面のボタン。
  * カード状の囲みは持たせず、ボタン自体がマシンに直接ついているように見せる。
  * 円ボタン＋進捗リングで、実機のダイヤル/タイマーボタンのような見た目にしている。
@@ -83,7 +107,6 @@ kbd {
 .machine-buttons {
   display: flex;
   gap: 20px;
-  user-select: none;
 }
 
 .brew-mode-ring {

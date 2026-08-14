@@ -43,26 +43,29 @@ export function MachineControls() {
 
   return (
     <Html center distanceFactor={1.8} position={[MACHINE_X, MACHINE_PANEL.y, MACHINE_PANEL.z]} zIndexRange={[20, 0]}>
-      <div className="machine-buttons">
-        {(['single', 'double'] as const).map((mode) => {
-          const isActive = activeMode === mode
-          const disabled = (brewing && !isActive) || (!brewing && !ready)
-          const ringStyle: CSSProperties | undefined = isActive
-            ? ({ '--progress': `${progress * 360}deg` } as CSSProperties)
-            : undefined
+      <div className="machine-screen">
+        <div className="machine-screen__temp">94.0°C</div>
+        <div className="machine-buttons">
+          {(['single', 'double'] as const).map((mode) => {
+            const isActive = activeMode === mode
+            const disabled = (brewing && !isActive) || (!brewing && !ready)
+            const ringStyle: CSSProperties | undefined = isActive
+              ? ({ '--progress': `${progress * 360}deg` } as CSSProperties)
+              : undefined
 
-          return (
-            <div key={mode} className={`brew-mode-ring${isActive ? ' brew-mode-ring--active' : ''}`} style={ringStyle}>
-              <button type="button" className="brew-select-button" onClick={() => handlePress(mode)} disabled={disabled}>
-                {BREW_MODE_LABELS[mode]}
-              </button>
-              {isActive && <div className="brew-remaining">{(remaining / 1000).toFixed(1)}s</div>}
-            </div>
-          )
-        })}
+            return (
+              <div key={mode} className={`brew-mode-ring${isActive ? ' brew-mode-ring--active' : ''}`} style={ringStyle}>
+                <button type="button" className="brew-select-button" onClick={() => handlePress(mode)} disabled={disabled}>
+                  {BREW_MODE_LABELS[mode]}
+                </button>
+                {isActive && <div className="brew-remaining">{(remaining / 1000).toFixed(1)}s</div>}
+              </div>
+            )
+          })}
+        </div>
+
+        {blockedReason && <div className="machine-blocked">{blockedReason}</div>}
       </div>
-
-      {blockedReason && <div className="machine-blocked">{blockedReason}</div>}
     </Html>
   )
 }
