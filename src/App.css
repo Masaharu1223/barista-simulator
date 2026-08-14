@@ -77,29 +77,48 @@ kbd {
 /*
  * マシン前面のボタン。
  * カード状の囲みは持たせず、ボタン自体がマシンに直接ついているように見せる。
- * 実機の物理ボタンを意識して、押した瞬間に少し沈む立体的な見た目にしてある。
+ * 円ボタン＋進捗リングで、実機のダイヤル/タイマーボタンのような見た目にしている。
+ * 抽出中は同じボタンがそのまま「押すと中止」の役割を兼ねる。
  */
 .machine-buttons {
   display: flex;
-  gap: 10px;
+  gap: 20px;
   user-select: none;
 }
 
-.brew-select-button {
+.brew-mode-ring {
+  position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 11px 20px;
+  justify-content: center;
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* 進捗リング。--progress は残り時間に応じて毎フレーム JS 側から渡す */
+.brew-mode-ring--active {
+  background: conic-gradient(var(--accent) var(--progress, 0deg), rgba(255, 255, 255, 0.14) 0deg);
+}
+
+.brew-select-button {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(180deg, #52565e, #383c42);
   border: 1px solid rgba(0, 0, 0, 0.35);
-  border-bottom: 3px solid rgba(0, 0, 0, 0.45);
-  border-radius: 10px;
   color: #f1f3f5;
   font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   cursor: pointer;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
-  transition: background 120ms ease, transform 80ms ease, border-bottom-width 80ms ease;
+  transition: background 120ms ease, transform 80ms ease;
 }
 
 .brew-select-button:hover:not(:disabled) {
@@ -107,8 +126,7 @@ kbd {
 }
 
 .brew-select-button:active:not(:disabled) {
-  transform: translateY(2px);
-  border-bottom-width: 1px;
+  transform: scale(0.94);
 }
 
 .brew-select-button:disabled {
@@ -116,52 +134,28 @@ kbd {
   cursor: default;
 }
 
-.brew-select-button__label {
-  font-size: 16px;
-  font-weight: 700;
-  white-space: nowrap;
+/* 抽出中のボタンは「押すと中止」であることが伝わるよう色味を変える */
+.brew-mode-ring--active .brew-select-button {
+  background: linear-gradient(180deg, #6a3626, #4a2013);
 }
 
-.brew-select-button__meta {
+.brew-mode-ring--active .brew-select-button:hover:not(:disabled) {
+  background: linear-gradient(180deg, #7d4230, #5a2818);
+}
+
+.brew-remaining {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 10px;
-  opacity: 0.75;
-  white-space: nowrap;
-}
-
-/* 抽出中の残り時間表示。ボタンと違って常に見えている必要があるので、最低限の背景だけ持たせる */
-.brew-status {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 210px;
-  padding: 10px 14px;
-  background: rgba(15, 17, 20, 0.85);
-  border-radius: 10px;
-}
-
-.brew-progress {
-  height: 10px;
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.brew-progress__bar {
-  height: 100%;
-  background: linear-gradient(90deg, #8a3c14, #e0a15c);
-  transition: width 120ms linear;
-}
-
-.brew-progress__text {
-  font-size: 12px;
-  color: #e8ded1;
   font-variant-numeric: tabular-nums;
-  text-align: center;
+  color: #e8ded1;
   white-space: nowrap;
 }
 
 .machine-blocked {
-  margin-top: 6px;
+  margin-top: 12px;
   font-size: 11px;
   color: #f0a58a;
   text-align: center;

@@ -19,6 +19,6 @@ export const SHOTS_PER_BREW: Record<BrewMode, number> = {
 }
 
 export const BREW_MODE_LABELS: Record<BrewMode, string> = {
-  single: 'シングル',
-  double: 'ダブル',
+  single: 'single',
+  double: 'double',
 }

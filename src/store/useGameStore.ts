@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import {
+  cancelBrew,
   createInitialState,
   discardShot,
   pourShot,
@@ -28,6 +29,7 @@ type GameStore = {
 
   advanceTime: (now: number) => void
   startBrew: (mode: BrewMode) => void
+  cancelBrew: () => void
   holdShot: (shotId: string | null) => void
   pourHeldShot: (cupId: string) => void
   discardHeldShot: () => void
@@ -45,6 +47,8 @@ export const useGameStore = create<GameStore>((set) => ({
   advanceTime: (now) => set((s) => ({ now, game: tick(s.game, now) })),
 
   startBrew: (mode) => set((s) => ({ game: startBrew(s.game, mode, Date.now()) })),
+
+  cancelBrew: () => set((s) => ({ game: cancelBrew(s.game, Date.now()) })),
 
   holdShot: (shotId) => set({ heldShotId: shotId }),
 
