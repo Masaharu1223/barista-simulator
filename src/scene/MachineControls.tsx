@@ -4,14 +4,18 @@ import { canStartBrew, remainingBrewMs } from '../domain/game'
 import { BREW_DURATION_MS, BREW_MODE_LABELS } from '../domain/machine'
 import type { BrewMode } from '../domain/types'
 import { useGameStore } from '../store/useGameStore'
-import { MACHINE_PANEL, MACHINE_X } from './layout'
+import { MACHINE_PANEL } from './layout'
 
 /**
- * マシン前面の円ボタン。押すとそのモードで抽出が始まり、
- * 抽出中に同じボタンをもう一度押すと中止できる。
+ * マシン本体右側の操作パネル（CONTROL_PANEL）に付いている円ボタン。
+ * 押すとそのモードで抽出が始まり、抽出中に同じボタンをもう一度押すと中止できる。
  * 中止するとその時点までの進捗の量でショットがトレイに残るが、満タンにはならないため
  * カップへは注げない（＝待たずに済ませるズルにはならない）。ノックボックスへ捨ててから
  * 改めて正しいボタンで抽出をやり直す。
+ *
+ * グループヘッドの円柱の上にこのボタンを直接乗せると、ボタンの方が幅広く左右に
+ * はみ出してしまい「宙に浮いている」ように見えてしまったため、本体右側の平らな面
+ * （固定サイズの取り付け板 CONTROL_PANEL）にまとめて配置している。
  *
  * `transform` モードは画面のズーム率/表示倍率によって位置計算が崩れることがあるため、
  * カップラベル（Workbench.tsx）と同じ `center` + `distanceFactor` 方式にしている。
@@ -42,7 +46,12 @@ export function MachineControls() {
   }
 
   return (
-    <Html center distanceFactor={1.8} position={[MACHINE_X, MACHINE_PANEL.y, MACHINE_PANEL.z]} zIndexRange={[20, 0]}>
+    <Html
+      center
+      distanceFactor={1.8}
+      position={[MACHINE_PANEL.x, MACHINE_PANEL.y, MACHINE_PANEL.z]}
+      zIndexRange={[20, 0]}
+    >
       <div className="machine-buttons">
         {(['single', 'double'] as const).map((mode) => {
           const isActive = activeMode === mode
