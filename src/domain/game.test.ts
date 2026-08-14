@@ -139,19 +139,19 @@ describe('抽出', () => {
 })
 
 describe('抽出の中止', () => {
-  it('シングル抽出中に中止すると、即座にショットが1個トレイに出てマシンが idle になる', () => {
+  it('シングル抽出中に中止すると、ショットは出ずマシンが idle になる', () => {
     const s = startBrew(createInitialState(1), 'single', T0)
     const canceled = cancelBrew(s)
 
     expect(canceled.machine.status).toBe('idle')
-    expect(canceled.trayShots).toHaveLength(1)
+    expect(canceled.trayShots).toHaveLength(0)
   })
 
-  it('ダブル抽出中に中止すると、ショットが2個(slot 0,1)出る', () => {
+  it('ダブル抽出中に中止しても、ショットは1個も出ない', () => {
     const s = startBrew(createInitialState(1), 'double', T0)
     const canceled = cancelBrew(s)
 
-    expect(canceled.trayShots.map((shot) => shot.slot)).toEqual([0, 1])
+    expect(canceled.trayShots).toHaveLength(0)
   })
 
   it('抽出中でない(idle)ときは何も変わらない', () => {
@@ -165,23 +165,23 @@ describe('抽出の中止', () => {
     expect(canceled.stats.brews).toBe(1)
   })
 
-  it('中止しても廃棄数は変わらない(discardShot 経由でのみ増える)', () => {
+  it('中止しても廃棄数は変わらない(ショット自体が出ないため)', () => {
     const s = startBrew(createInitialState(1), 'single', T0)
     const canceled = cancelBrew(s)
     expect(canceled.stats.wasted).toBe(0)
   })
 
-  it('中止後はトレイが埋まっているので次の抽出を開始できない', () => {
+  it('中止後はトレイが空なのですぐ次の抽出を開始できる(満タンのショットを得るズルができない)', () => {
     const s = startBrew(createInitialState(1), 'single', T0)
     const canceled = cancelBrew(s)
-    expect(canStartBrew(canceled)).toBe(false)
+    expect(canStartBrew(canceled)).toBe(true)
   })
 
-  it('中止後に元の終了時刻で tick を呼んでも追加のショットは生成されない', () => {
+  it('中止後に元の終了時刻で tick を呼んでもショットは生成されない(すでに idle のため)', () => {
     const s = startBrew(createInitialState(1), 'single', T0)
     const canceled = cancelBrew(s)
     const ticked = tick(canceled, T0 + BREW_DURATION_MS.single)
-    expect(ticked.trayShots).toHaveLength(1)
+    expect(ticked.trayShots).toHaveLength(0)
   })
 })
 

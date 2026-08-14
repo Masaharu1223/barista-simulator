@@ -75,13 +75,13 @@ export function startBrew(state: GameState, mode: BrewMode, now: number): GameSt
 
 /**
  * 抽出中に「もう一度ボタンを押す」で呼ばれる中止処理。
- * 中止＝抽出を即時完了させる（tick を endsAt で呼ぶのと同じ）。
- * 出てきたショットは通常の完了時と同様にトレイへ入り、
- * 片付け（discardShot）を済ませないと次の抽出は始められない。
+ * 待った分だけ得をする抜け道にならないよう、ショットは一切出さずにマシンを
+ * idle へ戻すだけにする。完了間際に中止しても満タンのショットが出てしまうと、
+ * 実時間で待つという核心のルールをすり抜けられてしまうため。
  */
 export function cancelBrew(state: GameState): GameState {
   if (state.machine.status !== 'brewing') return state
-  return tick(state, state.machine.endsAt)
+  return { ...state, machine: { status: 'idle' } }
 }
 
 /**
