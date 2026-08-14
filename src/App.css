@@ -74,93 +74,67 @@ kbd {
   line-height: 1.5;
 }
 
-/* マシン前面に貼り付くコントロールパネル */
-.machine-panel {
-  width: 250px;
+/*
+ * マシン前面のボタン。
+ * カード状の囲みは持たせず、ボタン自体がマシンに直接ついているように見せる。
+ * 実機の物理ボタンを意識して、押した瞬間に少し沈む立体的な見た目にしてある。
+ */
+.machine-buttons {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px;
-  background: rgba(16, 18, 21, 0.96);
-  border: 1px solid rgba(190, 196, 202, 0.35);
-  border-radius: 10px;
+  gap: 10px;
   user-select: none;
 }
 
-.machine-panel__modes {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-
-.mode-button {
+.brew-select-button {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 7px 4px;
-  background: rgba(52, 57, 63, 0.9);
-  border: 1px solid rgba(190, 196, 202, 0.25);
-  border-radius: 7px;
-  color: #dfe3e8;
+  align-items: center;
+  gap: 3px;
+  padding: 11px 20px;
+  background: linear-gradient(180deg, #52565e, #383c42);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-bottom: 3px solid rgba(0, 0, 0, 0.45);
+  border-radius: 10px;
+  color: #f1f3f5;
   font-family: inherit;
   cursor: pointer;
-  transition: background 120ms ease, border-color 120ms ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+  transition: background 120ms ease, transform 80ms ease, border-bottom-width 80ms ease;
 }
 
-.mode-button:hover:not(:disabled) {
-  background: rgba(72, 78, 86, 0.95);
+.brew-select-button:hover:not(:disabled) {
+  background: linear-gradient(180deg, #5f6470, #454a52);
 }
 
-.mode-button--active {
-  background: rgba(224, 161, 92, 0.92);
-  border-color: rgba(255, 220, 170, 0.9);
-  color: #241a10;
+.brew-select-button:active:not(:disabled) {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
 }
 
-.mode-button:disabled {
-  opacity: 0.5;
+.brew-select-button:disabled {
+  opacity: 0.4;
   cursor: default;
 }
 
-.mode-button__label {
-  font-size: 14px;
+.brew-select-button__label {
+  font-size: 16px;
   font-weight: 700;
 }
 
-.mode-button__meta {
+.brew-select-button__meta {
   font-size: 10px;
   opacity: 0.75;
 }
 
-.brew-button {
-  padding: 10px;
-  background: #b5461f;
-  border: 1px solid rgba(255, 190, 150, 0.4);
-  border-radius: 8px;
-  color: #fff2e8;
-  font-family: inherit;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-  transition: background 120ms ease;
-}
-
-.brew-button:hover:not(:disabled) {
-  background: #cf5426;
-}
-
-.brew-button:disabled {
-  background: #3a3d42;
-  border-color: rgba(190, 196, 202, 0.18);
-  color: rgba(223, 227, 232, 0.45);
-  cursor: default;
-}
-
-.machine-panel__status {
+/* 抽出中の残り時間表示。ボタンと違って常に見えている必要があるので、最低限の背景だけ持たせる */
+.brew-status {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
+  min-width: 210px;
+  padding: 10px 14px;
+  background: rgba(15, 17, 20, 0.85);
+  border-radius: 10px;
 }
 
 .brew-progress {
@@ -183,7 +157,8 @@ kbd {
   text-align: center;
 }
 
-.machine-panel__blocked {
+.machine-blocked {
+  margin-top: 6px;
   font-size: 11px;
   color: #f0a58a;
   text-align: center;
