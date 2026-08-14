@@ -1,4 +1,15 @@
-import { COUNTER_TOP_Y, GROUP_HEAD, MACHINE_BODY, MACHINE_X, MACHINE_Z, SPOUT_OFFSET_X, TRAY_Z } from './layout'
+import { Html } from '@react-three/drei'
+import {
+  CONTROL_PANEL,
+  COUNTER_TOP_Y,
+  GROUP_HEAD,
+  MACHINE_BODY,
+  MACHINE_X,
+  MACHINE_Z,
+  PRESSURE_GAUGE,
+  SPOUT_OFFSET_X,
+  TRAY_Z,
+} from './layout'
 
 const COLORS = {
   shell: '#d9dce0',
@@ -45,9 +56,9 @@ export function EspressoMachine({ onSelect }: { onSelect?: () => void }) {
 
       {/*
         グループヘッド。下から順に「クロムの下部 → 黒い画面台 → 赤いリング → クロムの上部」を積む。
-        画面台は固定サイズの筐体だけを担当し、実際に状態が変わる操作パネル（MachineControls）は
-        その正面に HTML オーバーレイとして重ねる。3D側の静的メッシュとHTMLの動的な内容・サイズを
-        競合させないため。
+        画面台にはLCD表示を模した演出（下の "94.0°C"）だけを乗せ、操作ボタンは置かない。
+        円柱の上に円ボタンを2つ並べると左右にはみ出して宙に浮いて見えてしまうため、
+        実際の操作パネルは本体右側の平らな面（CONTROL_PANEL）にまとめて配置する。
       */}
       <mesh position={[MACHINE_X, GROUP_HEAD.lower.y, GROUP_HEAD.z]} castShadow>
         <cylinderGeometry args={[GROUP_HEAD.lower.radius, GROUP_HEAD.lower.radius, GROUP_HEAD.lower.height, 24]} />
@@ -65,6 +76,15 @@ export function EspressoMachine({ onSelect }: { onSelect?: () => void }) {
         <cylinderGeometry args={[GROUP_HEAD.top.radius, GROUP_HEAD.top.radius, GROUP_HEAD.top.height, 24]} />
         <meshStandardMaterial color={COLORS.chrome} roughness={0.15} metalness={0.9} />
       </mesh>
+      {/* LCD温度表示の演出。実際の温度ロジックは持たない固定表示 */}
+      <Html
+        center
+        distanceFactor={1.8}
+        position={[MACHINE_X, GROUP_HEAD.screen.y, GROUP_HEAD.z + GROUP_HEAD.screen.radius]}
+        zIndexRange={[15, 0]}
+      >
+        <div className="machine-screen__temp">94.0°C</div>
+      </Html>
 
       {/* ポルタフィルター（グループヘッドに刺さったハンドル） */}
       <group position={[MACHINE_X, COUNTER_TOP_Y + 0.135, TRAY_Z]}>
@@ -103,23 +123,31 @@ export function EspressoMachine({ onSelect }: { onSelect?: () => void }) {
         </group>
       ))}
 
-      {/* 圧力計（装飾） */}
-      <group
-        position={[
-          MACHINE_X + MACHINE_BODY.width / 2 - 0.08,
-          COUNTER_TOP_Y + 0.32,
-          MACHINE_Z + MACHINE_BODY.depth / 2 + 0.005,
-        ]}
-      >
+      {/* 圧力計（装飾）。操作パネルとぶつからないよう本体右端寄りに小さめに配置する */}
+      <group position={[PRESSURE_GAUGE.x, PRESSURE_GAUGE.y, MACHINE_Z + MACHINE_BODY.depth / 2 + 0.005]}>
         <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
-          <cylinderGeometry args={[0.045, 0.045, 0.012, 24]} />
+          <cylinderGeometry args={[PRESSURE_GAUGE.radius, PRESSURE_GAUGE.radius, 0.012, 24]} />
           <meshStandardMaterial color={COLORS.gaugeRim} roughness={0.4} metalness={0.5} />
         </mesh>
         <mesh position={[0, 0, 0.007]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.036, 0.036, 0.004, 24]} />
+          <cylinderGeometry args={[PRESSURE_GAUGE.radius * 0.8, PRESSURE_GAUGE.radius * 0.8, 0.004, 24]} />
           <meshStandardMaterial color={COLORS.gaugeFace} roughness={0.5} />
         </mesh>
       </group>
+
+      {/*
+        操作パネルの取り付け板（装飾）。実機の写真でも、各グループヘッドのLCD画面とは別に
+        本体右側にまとまった操作ボタン一式がある。板は状態に関わらず常に同じサイズなので、
+        中身（MachineControls の HTML）がボタンのみ/警告文つきなどに変化しても
+        筐体側とズレることはない。
+      */}
+      <mesh
+        position={[CONTROL_PANEL.x, CONTROL_PANEL.y, CONTROL_PANEL.z - CONTROL_PANEL.depth / 2]}
+        castShadow
+      >
+        <boxGeometry args={[CONTROL_PANEL.width, CONTROL_PANEL.height, CONTROL_PANEL.depth]} />
+        <meshStandardMaterial color={COLORS.screen} roughness={0.4} metalness={0.15} />
+      </mesh>
 
       {/*
         ブランドプレート（装飾）。実機には実在ブランドのロゴが入っているが、

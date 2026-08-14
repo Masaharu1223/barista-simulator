@@ -24,12 +24,11 @@ export const TRAY_Z = MACHINE_Z + MACHINE_BODY.depth / 2 + 0.07
 export const TRAY_SLOT_X = [MACHINE_X - SPOUT_OFFSET_X, MACHINE_X + SPOUT_OFFSET_X]
 
 /**
- * グループヘッド。本体前面から突き出す、抽出部一式。
+ * グループヘッド。本体前面から突き出す、抽出部一式（見た目のみ）。
  * ポルタフィルターの位置（COUNTER_TOP_Y+0.135, TRAY_Z）は変えず、そこから
  * 上へ「クロムの下部 → 黒い画面部分 → 赤いリング → クロムの上部」と積む。
- * 画面部分は固定サイズの筐体で、実際に状態が変わる操作パネル（MachineControls）は
- * その正面に HTML オーバーレイとして重ねるだけにする
- * （3D側の静的メッシュとHTMLの動的な内容・サイズを競合させない）。
+ * 「画面」部分は実機のLCD表示を模した演出のみを乗せる装飾で、操作ボタンは
+ * 置かない（円柱の上に円ボタンを乗せると左右にはみ出して宙に浮いて見えるため）。
  */
 const GROUP_HEAD_Z = TRAY_Z - 0.02
 
@@ -41,10 +40,35 @@ export const GROUP_HEAD = {
   top: { radius: 0.075, height: 0.1, y: COUNTER_TOP_Y + 0.377 },
 }
 
-/** 操作パネル（MachineControls）を貼り付ける位置。グループヘッドの「画面」部分の正面 */
+/** 圧力計（装飾）。操作パネルとぶつからないよう本体右端寄りに小さめに配置する */
+export const PRESSURE_GAUGE = {
+  x: MACHINE_X + 0.39,
+  y: COUNTER_TOP_Y + 0.32,
+  radius: 0.03,
+}
+
+/**
+ * 操作パネル（MachineControls）を貼り付ける位置と、その土台となる
+ * 固定サイズの取り付け板（本体前面の平らな部分、グループヘッドと圧力計の間）。
+ * 実機の写真にも、各グループヘッドのLCD画面とは別に、右側にまとまった
+ * 独立の操作ボタン一式がある。ここはそれと同じ構成にしている。
+ * 板は状態にかかわらず常に同じサイズなので、中身（HTML）が
+ * ボタンのみ/警告文つきなど変化しても筐体側とズレる心配がない。
+ */
+export const CONTROL_PANEL = {
+  x: MACHINE_X + 0.21,
+  y: COUNTER_TOP_Y + 0.3,
+  z: MACHINE_Z + MACHINE_BODY.depth / 2 + 0.012,
+  width: 0.19,
+  height: 0.13,
+  depth: 0.02,
+}
+
+/** 操作パネル（MachineControls）を貼り付ける位置。CONTROL_PANEL の正面 */
 export const MACHINE_PANEL = {
-  y: GROUP_HEAD.screen.y,
-  z: GROUP_HEAD.z + GROUP_HEAD.screen.radius,
+  x: CONTROL_PANEL.x,
+  y: CONTROL_PANEL.y,
+  z: CONTROL_PANEL.z,
 }
 
 /** 余ったショットを捨てるノックボックス */
