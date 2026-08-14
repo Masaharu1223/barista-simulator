@@ -18,9 +18,18 @@ export const MACHINE_X = -1.05
 export const MACHINE_Z = -0.14
 export const MACHINE_BODY = { width: 0.85, height: 0.52, depth: 0.46 }
 
-/** 操作パネルを貼り付けるマシン前面の位置。本体の高さに収まるよう中央やや上に置く */
+/**
+ * マシン前面の黒い装飾パネル（ディスプレイ風の見た目）の中心高さ。
+ * 操作パネル（MACHINE_PANEL）もここに揃えることで、
+ * 「マシンの画面に操作パネルが表示されている」ように見せる。
+ * 別々の式で計算すると、この2つが一致しているかを見た目でしか検証できず、
+ * ずれに気づきにくいので1か所にまとめている。
+ */
+export const MACHINE_SCREEN_Y = COUNTER_TOP_Y + MACHINE_BODY.height - 0.11
+
+/** 操作パネルを貼り付けるマシン前面の位置。装飾パネルと同じ高さに揃える */
 export const MACHINE_PANEL = {
-  y: COUNTER_TOP_Y + MACHINE_BODY.height * 0.58,
+  y: MACHINE_SCREEN_Y,
   z: MACHINE_Z + MACHINE_BODY.depth / 2 + 0.02,
 }
 
