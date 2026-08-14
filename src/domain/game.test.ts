@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   MAX_ACTIVE_ORDERS,
+  cancelBrew,
   canServe,
   canStartBrew,
   createInitialState,
@@ -134,6 +135,53 @@ describe('抽出', () => {
     s = discardShot(s, s.trayShots[0].id)
     s = discardShot(s, s.trayShots[0].id)
     expect(canStartBrew(s)).toBe(true)
+  })
+})
+
+describe('抽出の中止', () => {
+  it('シングル抽出中に中止すると、即座にショットが1個トレイに出てマシンが idle になる', () => {
+    const s = startBrew(createInitialState(1), 'single', T0)
+    const canceled = cancelBrew(s)
+
+    expect(canceled.machine.status).toBe('idle')
+    expect(canceled.trayShots).toHaveLength(1)
+  })
+
+  it('ダブル抽出中に中止すると、ショットが2個(slot 0,1)出る', () => {
+    const s = startBrew(createInitialState(1), 'double', T0)
+    const canceled = cancelBrew(s)
+
+    expect(canceled.trayShots.map((shot) => shot.slot)).toEqual([0, 1])
+  })
+
+  it('抽出中でない(idle)ときは何も変わらない', () => {
+    const s = createInitialState(1)
+    expect(cancelBrew(s)).toEqual(s)
+  })
+
+  it('中止しても抽出回数は変わらない(startBrew 時点で加算済み)', () => {
+    const s = startBrew(createInitialState(1), 'double', T0)
+    const canceled = cancelBrew(s)
+    expect(canceled.stats.brews).toBe(1)
+  })
+
+  it('中止しても廃棄数は変わらない(discardShot 経由でのみ増える)', () => {
+    const s = startBrew(createInitialState(1), 'single', T0)
+    const canceled = cancelBrew(s)
+    expect(canceled.stats.wasted).toBe(0)
+  })
+
+  it('中止後はトレイが埋まっているので次の抽出を開始できない', () => {
+    const s = startBrew(createInitialState(1), 'single', T0)
+    const canceled = cancelBrew(s)
+    expect(canStartBrew(canceled)).toBe(false)
+  })
+
+  it('中止後に元の終了時刻で tick を呼んでも追加のショットは生成されない', () => {
+    const s = startBrew(createInitialState(1), 'single', T0)
+    const canceled = cancelBrew(s)
+    const ticked = tick(canceled, T0 + BREW_DURATION_MS.single)
+    expect(ticked.trayShots).toHaveLength(1)
   })
 })
 
