@@ -3,7 +3,6 @@ import { COUNTER_TOP_Y, MACHINE_BODY, MACHINE_X, MACHINE_Z, SPOUT_OFFSET_X, TRAY
 const COLORS = {
   shell: '#c3c7cb',
   top: '#22252a',
-  panel: '#1b1e22',
   group: '#8d9196',
   portafilter: '#141518',
 }
@@ -33,14 +32,6 @@ export function EspressoMachine({ onSelect }: { onSelect?: () => void }) {
       <mesh position={[MACHINE_X, COUNTER_TOP_Y + MACHINE_BODY.height + 0.015, MACHINE_Z]} castShadow>
         <boxGeometry args={[MACHINE_BODY.width + 0.04, 0.03, MACHINE_BODY.depth + 0.03]} />
         <meshStandardMaterial color={COLORS.top} roughness={0.5} metalness={0.4} />
-      </mesh>
-
-      {/* 前面の黒いパネル */}
-      <mesh
-        position={[MACHINE_X, COUNTER_TOP_Y + MACHINE_BODY.height - 0.11, MACHINE_Z + MACHINE_BODY.depth / 2]}
-      >
-        <boxGeometry args={[MACHINE_BODY.width - 0.06, 0.2, 0.01]} />
-        <meshStandardMaterial color={COLORS.panel} roughness={0.4} />
       </mesh>
 
       {/* グループヘッド。本体から前へ突き出し、真下にグラスが置けるようにする */}

@@ -18,9 +18,14 @@ export const MACHINE_X = -1.05
 export const MACHINE_Z = -0.14
 export const MACHINE_BODY = { width: 0.85, height: 0.52, depth: 0.46 }
 
-/** 操作パネルを貼り付けるマシン前面の位置。本体の高さに収まるよう中央やや上に置く */
+/**
+ * 操作パネル（MachineControls）を貼り付けるマシン前面の位置。
+ * 抽出中/警告表示ありなど状態によってパネルの高さ自体が変わるため、
+ * マシン側に「パネルの形に合わせた」装飾は置かない。操作パネル自身が
+ * 背景（暗い角丸パネル）を持っているので、それだけで画面らしく見える。
+ */
 export const MACHINE_PANEL = {
-  y: COUNTER_TOP_Y + MACHINE_BODY.height * 0.58,
+  y: COUNTER_TOP_Y + MACHINE_BODY.height - 0.11,
   z: MACHINE_Z + MACHINE_BODY.depth / 2 + 0.02,
 }
 
