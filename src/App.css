@@ -119,11 +119,13 @@ kbd {
 .brew-select-button__label {
   font-size: 16px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .brew-select-button__meta {
   font-size: 10px;
   opacity: 0.75;
+  white-space: nowrap;
 }
 
 /* 抽出中の残り時間表示。ボタンと違って常に見えている必要があるので、最低限の背景だけ持たせる */
@@ -155,6 +157,7 @@ kbd {
   color: #e8ded1;
   font-variant-numeric: tabular-nums;
   text-align: center;
+  white-space: nowrap;
 }
 
 .machine-blocked {
@@ -162,6 +165,7 @@ kbd {
   font-size: 11px;
   color: #f0a58a;
   text-align: center;
+  white-space: nowrap;
 }
 
 /* 画面右上の注文一覧 */
