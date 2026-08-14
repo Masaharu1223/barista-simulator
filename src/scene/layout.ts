@@ -18,21 +18,34 @@ export const MACHINE_X = -1.05
 export const MACHINE_Z = -0.14
 export const MACHINE_BODY = { width: 0.85, height: 0.52, depth: 0.46 }
 
-/**
- * 操作パネル（MachineControls）を貼り付けるマシン前面の位置。
- * 抽出中/警告表示ありなど状態によってパネルの高さ自体が変わるため、
- * マシン側に「パネルの形に合わせた」装飾は置かない。操作パネル自身が
- * 背景（暗い角丸パネル）を持っているので、それだけで画面らしく見える。
- */
-export const MACHINE_PANEL = {
-  y: COUNTER_TOP_Y + MACHINE_BODY.height - 0.11,
-  z: MACHINE_Z + MACHINE_BODY.depth / 2 + 0.02,
-}
-
 /** ポルタフィルターのスパウトの位置。抽出したショットはこの真下に出る */
 export const SPOUT_OFFSET_X = 0.045
 export const TRAY_Z = MACHINE_Z + MACHINE_BODY.depth / 2 + 0.07
 export const TRAY_SLOT_X = [MACHINE_X - SPOUT_OFFSET_X, MACHINE_X + SPOUT_OFFSET_X]
+
+/**
+ * グループヘッド。本体前面から突き出す、抽出部一式。
+ * ポルタフィルターの位置（COUNTER_TOP_Y+0.135, TRAY_Z）は変えず、そこから
+ * 上へ「クロムの下部 → 黒い画面部分 → 赤いリング → クロムの上部」と積む。
+ * 画面部分は固定サイズの筐体で、実際に状態が変わる操作パネル（MachineControls）は
+ * その正面に HTML オーバーレイとして重ねるだけにする
+ * （3D側の静的メッシュとHTMLの動的な内容・サイズを競合させない）。
+ */
+const GROUP_HEAD_Z = TRAY_Z - 0.02
+
+export const GROUP_HEAD = {
+  z: GROUP_HEAD_Z,
+  lower: { radius: 0.06, height: 0.1, y: COUNTER_TOP_Y + 0.205 },
+  screen: { radius: 0.07, height: 0.06, y: COUNTER_TOP_Y + 0.285 },
+  band: { radius: 0.072, height: 0.012, y: COUNTER_TOP_Y + 0.322 },
+  top: { radius: 0.075, height: 0.1, y: COUNTER_TOP_Y + 0.377 },
+}
+
+/** 操作パネル（MachineControls）を貼り付ける位置。グループヘッドの「画面」部分の正面 */
+export const MACHINE_PANEL = {
+  y: GROUP_HEAD.screen.y,
+  z: GROUP_HEAD.z + GROUP_HEAD.screen.radius,
+}
 
 /** 余ったショットを捨てるノックボックス */
 export const KNOCK_BOX = { x: -0.5, z: 0.26, radius: 0.1, height: 0.16 }
