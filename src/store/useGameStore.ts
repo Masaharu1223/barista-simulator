@@ -48,7 +48,7 @@ export const useGameStore = create<GameStore>((set) => ({
 
   startBrew: (mode) => set((s) => ({ game: startBrew(s.game, mode, Date.now()) })),
 
-  cancelBrew: () => set((s) => ({ game: cancelBrew(s.game) })),
+  cancelBrew: () => set((s) => ({ game: cancelBrew(s.game, Date.now()) })),
 
   holdShot: (shotId) => set({ heldShotId: shotId }),
 

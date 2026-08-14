@@ -31,12 +31,15 @@ function DragSurface() {
 /** 掴んでいるショット。ポインタに追従する */
 function HeldShot() {
   const ref = useRef<Group>(null)
+  const volume = useGameStore(
+    (state) => state.game.trayShots.find((shot) => shot.id === state.heldShotId)?.volume ?? 1,
+  )
 
   useFrame(() => {
     if (ref.current) ref.current.position.copy(dragPoint)
   })
 
-  return <ShotGlassMesh ref={ref} fill={1} interactive={false} highlight />
+  return <ShotGlassMesh ref={ref} fill={volume} interactive={false} highlight />
 }
 
 /**

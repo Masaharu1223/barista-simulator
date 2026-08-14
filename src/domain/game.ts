@@ -75,13 +75,30 @@ export function startBrew(state: GameState, mode: BrewMode, now: number): GameSt
 
 /**
  * 抽出中に「もう一度ボタンを押す」で呼ばれる中止処理。
- * 待った分だけ得をする抜け道にならないよう、ショットは一切出さずにマシンを
- * idle へ戻すだけにする。完了間際に中止しても満タンのショットが出てしまうと、
- * 実時間で待つという核心のルールをすり抜けられてしまうため。
+ * その時点までの進捗をそのままショットの中身の量として残す
+ * （＝満タンにはならない。待った分だけ得をする抜け道を防ぐ）。
+ * 中身が1未満のショットはカップへ注げないため、プレイヤーは
+ * ノックボックスへ捨ててから改めて正しいボタンで抽出をやり直す。
+ * 時刻を引数で受け取ることで、テストから任意の時刻を与えられる。
  */
-export function cancelBrew(state: GameState): GameState {
+export function cancelBrew(state: GameState, now: number): GameState {
   if (state.machine.status !== 'brewing') return state
-  return { ...state, machine: { status: 'idle' } }
+  const { mode, startedAt } = state.machine
+  const volume = Math.min(1, Math.max(0, (now - startedAt) / BREW_DURATION_MS[mode]))
+
+  const shots: Shot[] = []
+  let seq = state.seq
+  for (let i = 0; i < SHOTS_PER_BREW[mode]; i += 1) {
+    seq += 1
+    shots.push({ id: `shot-${seq}`, slot: i, volume })
+  }
+
+  return {
+    ...state,
+    machine: { status: 'idle' },
+    trayShots: [...state.trayShots, ...shots],
+    seq,
+  }
 }
 
 /**
@@ -98,7 +115,7 @@ export function tick(state: GameState, now: number): GameState {
     seq += 1
     // slot はスパウトの位置。1つ取り出しても残りが動かないよう、
     // 並び順ではなくショット自身が置き場所を持つ
-    shots.push({ id: `shot-${seq}`, slot: i })
+    shots.push({ id: `shot-${seq}`, slot: i, volume: 1 })
   }
 
   return {
@@ -127,10 +144,12 @@ export function canPour(state: GameState, cupId: string): boolean {
 
 /**
  * トレイのショットをカップに注ぐ。
- * 満杯のカップに落とした場合は何も起きない＝ショットはトレイに残ったままになる。
+ * 満杯のカップに落とした場合や、中止で出た未完成（volume < 1）のショットの場合は
+ * 何も起きない＝ショットはトレイに残ったままになる。未完成のショットは捨てるしかない。
  */
 export function pourShot(state: GameState, shotId: string, cupId: string): GameState {
-  if (!state.trayShots.some((shot) => shot.id === shotId)) return state
+  const shot = state.trayShots.find((s) => s.id === shotId)
+  if (shot === undefined || shot.volume < 1) return state
   if (!canPour(state, cupId)) return state
 
   return {

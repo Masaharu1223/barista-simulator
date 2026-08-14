@@ -41,6 +41,9 @@ function CupLabel({ cup, onServe }: { cup: Cup; onServe: () => void }) {
 export function Workbench() {
   const cups = useGameStore((state) => state.game.cups)
   const heldShotId = useGameStore((state) => state.heldShotId)
+  const heldShotVolume = useGameStore(
+    (state) => state.game.trayShots.find((shot) => shot.id === state.heldShotId)?.volume ?? 1,
+  )
   const pourHeldShot = useGameStore((state) => state.pourHeldShot)
   const serve = useGameStore((state) => state.serve)
   const dragging = heldShotId !== null
@@ -48,7 +51,8 @@ export function Workbench() {
   return (
     <group>
       {cups.map((cup, index) => {
-        const acceptsShot = cup.pouredShots < cup.order.requiredShots
+        // 中止で出た未完成のショット（volume < 1）はどのカップにも注げない
+        const acceptsShot = cup.pouredShots < cup.order.requiredShots && heldShotVolume >= 1
         return (
           <group key={cup.id} position={[CUP_SLOT_X[index] ?? 0, COUNTER_TOP_Y, CUP_Z]}>
             <CupMesh

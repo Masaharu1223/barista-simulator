@@ -86,7 +86,7 @@ export function TrayShots() {
           <ShotGlassMesh
             key={shot.id}
             position={[TRAY_SLOT_X[shot.slot] ?? MACHINE_X, TRAY_SURFACE_Y, TRAY_Z]}
-            fill={1}
+            fill={shot.volume}
             onPointerDown={(event) => {
               event.stopPropagation()
               // 掴んだ瞬間の位置を入れておかないと、最初の1フレームだけ

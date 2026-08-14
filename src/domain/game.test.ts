@@ -139,49 +139,51 @@ describe('抽出', () => {
 })
 
 describe('抽出の中止', () => {
-  it('シングル抽出中に中止すると、ショットは出ずマシンが idle になる', () => {
+  it('シングル抽出を50%進めてから中止すると、その進捗と同じ量のショットが1個トレイに残る', () => {
     const s = startBrew(createInitialState(1), 'single', T0)
-    const canceled = cancelBrew(s)
+    const canceled = cancelBrew(s, T0 + BREW_DURATION_MS.single / 2)
 
     expect(canceled.machine.status).toBe('idle')
-    expect(canceled.trayShots).toHaveLength(0)
+    expect(canceled.trayShots).toHaveLength(1)
+    expect(canceled.trayShots[0].volume).toBeCloseTo(0.5)
   })
 
-  it('ダブル抽出中に中止しても、ショットは1個も出ない', () => {
+  it('ダブル抽出中に中止すると、両方のスパウト分(slot 0,1)が同じ量で残る', () => {
     const s = startBrew(createInitialState(1), 'double', T0)
-    const canceled = cancelBrew(s)
+    const canceled = cancelBrew(s, T0 + BREW_DURATION_MS.double / 4)
 
-    expect(canceled.trayShots).toHaveLength(0)
+    expect(canceled.trayShots.map((shot) => shot.slot)).toEqual([0, 1])
+    expect(canceled.trayShots.every((shot) => shot.volume === 0.25)).toBe(true)
   })
 
   it('抽出中でない(idle)ときは何も変わらない', () => {
     const s = createInitialState(1)
-    expect(cancelBrew(s)).toEqual(s)
+    expect(cancelBrew(s, T0)).toEqual(s)
   })
 
   it('中止しても抽出回数は変わらない(startBrew 時点で加算済み)', () => {
     const s = startBrew(createInitialState(1), 'double', T0)
-    const canceled = cancelBrew(s)
+    const canceled = cancelBrew(s, T0 + 5_000)
     expect(canceled.stats.brews).toBe(1)
   })
 
-  it('中止しても廃棄数は変わらない(ショット自体が出ないため)', () => {
+  it('中止した時点では廃棄数はまだ増えない(discardShot 経由でのみ増える)', () => {
     const s = startBrew(createInitialState(1), 'single', T0)
-    const canceled = cancelBrew(s)
+    const canceled = cancelBrew(s, T0 + 5_000)
     expect(canceled.stats.wasted).toBe(0)
   })
 
-  it('中止後はトレイが空なのですぐ次の抽出を開始できる(満タンのショットを得るズルができない)', () => {
+  it('中止後はトレイが埋まっているので次の抽出を開始できない', () => {
     const s = startBrew(createInitialState(1), 'single', T0)
-    const canceled = cancelBrew(s)
-    expect(canStartBrew(canceled)).toBe(true)
+    const canceled = cancelBrew(s, T0 + 5_000)
+    expect(canStartBrew(canceled)).toBe(false)
   })
 
-  it('中止後に元の終了時刻で tick を呼んでもショットは生成されない(すでに idle のため)', () => {
+  it('中止後に元の終了時刻で tick を呼んでも追加のショットは生成されない(すでに idle のため)', () => {
     const s = startBrew(createInitialState(1), 'single', T0)
-    const canceled = cancelBrew(s)
+    const canceled = cancelBrew(s, T0 + 5_000)
     const ticked = tick(canceled, T0 + BREW_DURATION_MS.single)
-    expect(ticked.trayShots).toHaveLength(0)
+    expect(ticked.trayShots).toHaveLength(1)
   })
 })
 
@@ -213,11 +215,29 @@ describe('ショットを注ぐ', () => {
     expect(pourShot(s, 'shot-does-not-exist', s.cups[0].id)).toEqual(s)
     expect(pourShot(s, s.trayShots[0].id, 'cup-does-not-exist')).toEqual(s)
   })
+
+  it('中止で出た未完成のショットはカップに注げない', () => {
+    let s = startBrew(fourSingleShotOrders(), 'single', T0)
+    s = cancelBrew(s, T0 + BREW_DURATION_MS.single / 2)
+    const cup = s.cups[0]
+
+    const rejected = pourShot(s, s.trayShots[0].id, cup.id)
+    expect(rejected).toEqual(s)
+  })
 })
 
 describe('ショットの廃棄', () => {
   it('捨てたショットは廃棄カウンタに計上される', () => {
     const s = brew(createInitialState(1), 'single')
+    const discarded = discardShot(s, s.trayShots[0].id)
+
+    expect(discarded.trayShots).toHaveLength(0)
+    expect(discarded.stats.wasted).toBe(1)
+  })
+
+  it('未完成のショットも通常どおり廃棄できる', () => {
+    let s = startBrew(createInitialState(1), 'single', T0)
+    s = cancelBrew(s, T0 + 5_000)
     const discarded = discardShot(s, s.trayShots[0].id)
 
     expect(discarded.trayShots).toHaveLength(0)
